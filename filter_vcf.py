@@ -1,5 +1,12 @@
-import sys, os, re
-from collections import OrderedDict
+import sys
+
+## A script used to filter
+## a SNP VCF file and correct
+## for some oddities in Varscan output.
+
+## Eric T Dawson
+## Texas Advanced Computing Center
+## November 2013
 
 snp = {}
 header = []
@@ -20,9 +27,9 @@ def load_file(infile):
 
 
 def indel_filter(snp_file, indel_file):
+    ## If a snp falls within ten base pairs of an indel, remove it.
     global snp
     global header
-
     with open(indel_file, "r") as indel_vcf:
         for line in indel_vcf:
             if (line.startswith("#")):
@@ -30,12 +37,14 @@ def indel_filter(snp_file, indel_file):
             else:
                 position = line.split("\t")[1]
                 pos = int(position)
-                window = [str(pos - 2), str(pos -1), str(pos), str(pos + 1), str(pos + 2)]
+                window = range(pos-9, pos+10)
                 for x in window:
-                    if (x in snp.keys()):
-                        del snp[x]
+                    if (str(x) in snp.keys()):
+                        del snp[str(x)]
 
 def snp_filter():
+    ## If 3 or more snps fall within ten base pairs
+    ## of each other, remove them all.
     global snp
     dead_keys = []
     for key in snp:
@@ -45,22 +54,26 @@ def snp_filter():
         for x in range(int(key), high):
             if (str(x) in snp.keys() and str(x) != key):
                 neighbors.append(str(x))
-        print key + " : " + str(neighbors)
         if (len(neighbors) >= 2):
             if (not key in dead_keys):
                 dead_keys.append(key)
             for y in neighbors:
                 if (y not in dead_keys):
                     dead_keys.append(y)
-    print dead_keys
     for dead in dead_keys:
         del snp[dead]
 
 def remove_modulo():
+    ## Used for VarScan generated VCFs, as GATK
+    ## can't handle the modulo operator in the allele
+    ## frequency column
+    global snp
     for key in snp:
         snp[key] = snp[key].replace("%", "")
 
 def write_out(outfile):
+    ## Sort the keys (positions in the chromosome)
+    ## and print out the header to preserve VCF formatting
     global snp
     global header
     with open(outfile, "w") as out_vcf:
