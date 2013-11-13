@@ -1,4 +1,4 @@
-import sys
+import sys, re
 
 def write_outfile(name, header, lines):
     with open(name, "w") as out:
@@ -34,7 +34,9 @@ def extract_chrom(chrom, lines):
 
 def main():
     infile = sys.argv[1]
-    top_name = infile.split(".")[0] + "." + infile.split(".")[1] + "." + infile.split(".")[2]
+    sample_match = re.match("C[0-9]{0,3}\.TCGA-[0-9]{0,3}-[0-9]{0,4}", infile)
+    tmp = sample_match.group()
+    top_name = tmp + ".indel"
     tup = load_file(infile)
     header = tup[0]
     chroms = tup[1]
