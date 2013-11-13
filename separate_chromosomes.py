@@ -34,12 +34,12 @@ def extract_chrom(chrom, lines):
 
 def main():
     infile = sys.argv[1]
-    name = infile.split(".")[0]
+    top_name = infile.split(".")[0] + "." + infile.split(".")[1] + "." + infile.split(".")[2]
     tup = load_file(infile)
     header = tup[0]
     chroms = tup[1]
     for chrom in chroms:
         chrom_lines = extract_chrom(chrom, tup[2])
-        name = name + "." + chrom + ".vcf"
+        name = top_name + "." + chrom + ".vcf"
         write_outfile(name, header, chrom_lines)
 main()
