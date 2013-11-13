@@ -1,4 +1,10 @@
 import sys, re
+##A script to separate a vcf containing multiple chromosomes into multiple
+##vcfs containing one chromosome a piece. This script is much faster and
+##easier to use than GATK's selectVariants function, which can do something
+##similar.
+
+##Eric T Dawson, November 2013
 
 def write_outfile(name, header, lines):
     with open(name, "w") as out:
