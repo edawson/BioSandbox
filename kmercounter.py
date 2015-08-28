@@ -10,12 +10,12 @@ def parse_args():
     return parser.parse_args()
 
 def kmerize(my_seq, k):
-    ret = []
-    for i in xrange(0, len(my_seq) - k):
-        ret.append(my_seq[i : i + k])
-    return ret
+    #ret = []
+    #for i in xrange(0, len(my_seq) - k):
+    #    ret.append(my_seq[i : i + k])
+    #return ret
 
-        ## return [my_seq[i : i + k] for i in xrange(0, len(my_seq) -k)]
+    return [my_seq[i : i + k] for i in xrange(0, len(my_seq) -k)]
         ##
         ##
 
